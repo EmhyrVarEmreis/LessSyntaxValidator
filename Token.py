@@ -19,6 +19,7 @@ class Token(collections.namedtuple('Token', ['type', 'value', 'line', 'column'])
 
     @staticmethod
     def prepare_string(s, max):
+        s = s.replace('\n', '\\n').replace('\t', '\\t')
         l = len(s)
         if l > max:
             s = s[0:max - 3] + '...'

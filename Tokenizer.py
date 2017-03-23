@@ -5,27 +5,27 @@ from Token import Token
 
 class Tokenizer:
     input_string = ''
-    tokens_definitions = {
+    tokens_definitions = [
         ('VAR_NAME', r'\@[\w\-]+'),
-        ('CONSTANT', r'(?:\#[a-fA-F\0-9]+)|\d*\.?\d+(?:\s*\%|(?:px))?'),
-        ('ANCHOR', r'\.[a-zA-Z0-9\-]+'),
+        ('ANCHOR_OP', r'(?:(?:(?:\.[\w])|(?:\#)|(?:[a-zA-Z]))[a-zA-Z0-9\-]+\s*)+\s*\{'),
+        ('FUNCTION_OP', r'[a-zA-Z]\w+\s*\('),
+        ('CONSTANT', r'(?:\#[a-fA-F\0-9]{6})|\d*\.?\d+(?:\s*\%|(?:px))?'),
         ('STRING', r'[a-zA-Z\-]+'),
         ('SEMICOLON', r'\;'),
         ('COLON', r'\:'),
         ('COMMA', r'\,'),
-        ('BRACKET_OP', r'\('),
         ('BRACKET_CLOSE', r'\)'),
-        ('BLOCK_OP', r'\{'),
-        ('BLOCK_CLOSE', r'\}'),
+        ('ANCHOR_CLOSE', r'\}'),
         ('NEWLINE', r'\n'),
         ('WHITESPACES', r'[\ \t]+'),
         ('COMMENT', r'\/\/.*'),
         ('COMMENT_BLOCK', r'\/\*[\s\S]*?\*\/'),
         ('KEYWORD', r'(?:!important)|(?:all)')
-    }
+    ]
     tokens = []
 
-    def __init__(self, input_content, file=True):
+    def __init__(self, input_content, file=True, debug=False):
+        self.debug = debug
         if file:
             with open(input_content, 'r') as f:
                 self.input_string = f.read()
@@ -35,6 +35,8 @@ class Tokenizer:
     def tokenize(self):
         for token in self.tokenizer():
             self.tokens.append(token)
+            if self.debug:
+                print(token)
 
     def tokenizer(self):
         tok_regex = '|'.join('(?P<%s>%s)' % pair for pair in self.tokens_definitions)
@@ -48,10 +50,11 @@ class Tokenizer:
             if t == 'NEWLINE':
                 line_start = current_position
                 line_number += 1
-            elif t == 'COMMENT_BLOCK':
-                line_number += match.group(t).count('\n')
             elif t != 'WHITESPACES' and t != 'COMMENT':
-                yield Token(t, match.group(t), line_number, match.start() - line_start)
+                mg = match.group(t)
+                line_number += mg.count('\n')
+                if t != 'COMMENT_BLOCK':
+                    yield Token(t, mg, line_number, match.start() - line_start)
             current_position = match.end()
             match = get_token(self.input_string, current_position)
         if current_position != len(self.input_string):
