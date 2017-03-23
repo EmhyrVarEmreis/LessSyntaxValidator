@@ -8,7 +8,7 @@ class Tokenizer:
     tokens_definitions = {
         ('VAR_NAME', r'\@[\w\-]+'),
         ('CONSTANT', r'(?:\#[a-fA-F\0-9]+)|\d*\.?\d+(?:\s*\%|(?:px))?'),
-        ('ANCHOR', r'\.[a-zA-Z\-]+'),
+        ('ANCHOR', r'\.[a-zA-Z0-9\-]+'),
         ('STRING', r'[a-zA-Z\-]+'),
         ('SEMICOLON', r'\;'),
         ('COLON', r'\:'),
