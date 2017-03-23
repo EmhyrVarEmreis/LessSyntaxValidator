@@ -1,7 +1,12 @@
+import sys
+
 from Parser import Parser
 from Tokenizer import Tokenizer
 
+
 file = 'test\\t0.less'
+if len(sys.argv[1:]) > 0:
+    file = sys.argv[1]
 
 print("Tokens:")
 t = Tokenizer(file)
