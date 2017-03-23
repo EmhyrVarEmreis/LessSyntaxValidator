@@ -1,7 +1,7 @@
 from Parser import Parser
 from Tokenizer import Tokenizer
 
-file = 'F:\\dev\\private\\github\\LessSyntaxValidator\\test\\t0.less'
+file = 'test\\t0.less'
 
 print("Tokens:")
 t = Tokenizer(file)
